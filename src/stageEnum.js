@@ -1,0 +1,7 @@
+export default {
+    WAITING: 'WAITING',
+    WAITING_INPUT: 'WAITING_INPUT',
+    FETCHING: 'FETCHING',
+    IDLE: 'IDLE',
+    ERROR: 'ERROR'
+}
