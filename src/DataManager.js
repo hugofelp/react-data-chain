@@ -1,6 +1,6 @@
 import React from 'react'
 import { getActiveDefinitions, getDependenciesDefinitions, getConditionsParameters, addSubscriptionToState, removeSuscriptionFromState, getInvalidDefinitions } from './utils.js'
-import stage from './stageEnum.js'
+import statusEnum from './statusEnum.js'
 
 
 const DataManagerContext = React.createContext()
@@ -26,18 +26,18 @@ class DataManager extends React.Component {
         let newStatus = status
         invalidDefinitions.forEach( definition => {
             newStatus =  Object.assign( {}, newStatus, {
-                [ definition.__meta.id ]: stage.WAITING
+                [ definition.__meta.id ]: statusEnum.WAITING
             } )
         } )
 
         // get all definitions that are WAITING, and check if it's still true (if all dependencies available)
-        const queuedDefinitions = activeDefinitions.filter( definition => newStatus[ definition.__meta.id ] === stage.WAITING )
+        const queuedDefinitions = activeDefinitions.filter( definition => newStatus[ definition.__meta.id ] === statusEnum.WAITING )
         queuedDefinitions.forEach( definition => {
              const defDependencies = getDependenciesDefinitions( definition )
              // if all dependencies are complete, flag definition as ready to fetch
-             if ( defDependencies.length === 0 || defDependencies.every( dep => newStatus[ dep.__meta.id ] === stage.IDLE ) ) {
+             if ( defDependencies.length === 0 || defDependencies.every( dep => newStatus[ dep.__meta.id ] === statusEnum.IDLE ) ) {
                 newStatus = Object.assign( {}, newStatus, {
-                    [ definition.__meta.id ]: definition.__meta.fetcher ? stage.FETCHING : stage.WAITING_INPUT
+                    [ definition.__meta.id ]: definition.__meta.fetcher ? statusEnum.FETCHING : statusEnum.WAITING_INPUT
                 } )
              }
         } )
@@ -61,13 +61,13 @@ class DataManager extends React.Component {
         const activeDefinitions = getActiveDefinitions( subscriptions, definitions )
 
         // check for availability updates of fetcherless definitions
-        activeDefinitions.filter( definition => status[ definition.__meta.id ] === stage.WAITING_INPUT ).forEach( definition => {
+        activeDefinitions.filter( definition => status[ definition.__meta.id ] === statusEnum.WAITING_INPUT ).forEach( definition => {
             const parameters = getConditionsParameters( definition, store, status, paramsCache )
             const isDataAvailable = definition.__meta.isDataAvailable( parameters.mapped, parameters.raw )
             if ( isDataAvailable ) {
                 this.setState( state => Object.assign( {}, state, {
                     status: Object.assign( {}, state.status, {
-                        [ definition.__meta.id ]: stage.IDLE
+                        [ definition.__meta.id ]: statusEnum.IDLE
                     } )
                 } ) )
             }
@@ -75,13 +75,13 @@ class DataManager extends React.Component {
 
         // get definitions that are ready to be fecthed
         const fetchDefinitions = activeDefinitions.filter( definition => {
-            if ( status[ definition.__meta.id ] === stage.FETCHING || status[ definition.__meta.id ] === stage.ERROR ) {
+            if ( status[ definition.__meta.id ] === statusEnum.FETCHING || status[ definition.__meta.id ] === statusEnum.ERROR ) {
                 // true if the status just changed...
                 if(
-                    status[ definition.__meta.id ] === stage.FETCHING
+                    status[ definition.__meta.id ] === statusEnum.FETCHING
                     && (
-                        prevState.status[ definition.__meta.id ] !== stage.ERROR
-                        && prevState.status[ definition.__meta.id ] !== stage.FETCHING
+                        prevState.status[ definition.__meta.id ] !== statusEnum.ERROR
+                        && prevState.status[ definition.__meta.id ] !== statusEnum.FETCHING
                     )
                 ){
                     return true
@@ -106,18 +106,18 @@ class DataManager extends React.Component {
             if ( isDataAvailable ) {
                 this.setState( state => Object.assign( {}, state, {
                     status: Object.assign( {}, state.status, {
-                        [ definition.__meta.id ]: stage.IDLE
+                        [ definition.__meta.id ]: statusEnum.IDLE
                     } )
                 } ) )
             }
             else {
                 // if definition has been recovered from an error state, update back to fetching
-                if ( status[ definition.__meta.id ] === stage.ERROR ) {
+                if ( status[ definition.__meta.id ] === statusEnum.ERROR ) {
                     this.setState( state => {
-                        if ( state.status[ definition.__meta.id ] === stage.ERROR ) {
+                        if ( state.status[ definition.__meta.id ] === statusEnum.ERROR ) {
                             return Object.assign( {}, state, {
                                 status: Object.assign( {}, state.status, {
-                                    [ definition.__meta.id ]: stage.FETCHING
+                                    [ definition.__meta.id ]: statusEnum.FETCHING
                                 } )
                             } )
                         }
@@ -132,7 +132,7 @@ class DataManager extends React.Component {
                     successResponse => {
                         this.setState( state => {
                             // skip handling if status changed
-                            if ( state.status[ definition.__meta.id ] !== stage.FETCHING ) {
+                            if ( state.status[ definition.__meta.id ] !== statusEnum.FETCHING ) {
                                 return null
                             }
 
@@ -149,7 +149,7 @@ class DataManager extends React.Component {
                                     [ definition.__meta.storeId ]: mappedResponse
                                 } ),
                                 status: Object.assign( {}, state.status, {
-                                    [ definition.__meta.id ]: stage.IDLE
+                                    [ definition.__meta.id ]: statusEnum.IDLE
                                 } )
                             } )
                         } )
@@ -157,7 +157,7 @@ class DataManager extends React.Component {
                     errorResponse => {
                         this.setState( state => Object.assign( {}, state, {
                             status: Object.assign( {}, state.status, {
-                                [ definition.__meta.id ]: stage.ERROR
+                                [ definition.__meta.id ]: statusEnum.ERROR
                             } )
                         } ) )
                         throw( errorResponse )

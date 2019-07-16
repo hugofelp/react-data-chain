@@ -1,4 +1,4 @@
-import stage from './stageEnum.js'
+import statusEnum from './statusEnum.js'
 
 // returns { store, data, dependencies } and the result of mapParameters related to a definition
 export function getConditionsParameters( definition, store, status, cache ) {
@@ -26,11 +26,11 @@ export function formatConsumableData( dependenciesObject = {}, store, status ) {
         const definition =  dependenciesObject[ dependencyKey ]
         const def = definition.__meta
         const storeData = store[ def.storeId ]
-        const defStatus = status[ def.id ] || stage.WAITING
+        const defStatus = status[ def.id ] || statusEnum.WAITING
         const recursiveDependenciesObject = getDependenciesObject( dependenciesObject[ dependencyKey ] )
         const recursiveDependenciesData = formatConsumableData( recursiveDependenciesObject, store, status )
 
-        const selectedData = def.mapData ? def.mapData( { store: storeData, dependencies: recursiveDependenciesData } ) : storeData
+        const selectedData = def.mapData ? def.mapData( storeData, recursiveDependenciesData ) : storeData
         return objectAssignPath( formattedData, dependencyKey, {
             status: defStatus,
             value: selectedData
@@ -83,7 +83,7 @@ export function getInvalidDefinitions( definitions, store, status ) {
             return invalidOnes
         }
         // skip check if any operation is already being performed
-        if ( status[ definition.__meta.id ] !== stage.IDLE ) {
+        if ( status[ definition.__meta.id ] !== statusEnum.IDLE ) {
             return invalidOnes
         }
 
@@ -124,7 +124,7 @@ export function addSubscriptionToState( state, componentId, definition ) {
             ? Object.assign( { [ definitionId ]: definition }, state.definitions )
             :  state.definitions,
         status: !state.status[ definitionId ]
-            ? Object.assign( { [ definitionId ]: stage.WAITING }, state.status )
+            ? Object.assign( { [ definitionId ]: statusEnum.WAITING }, state.status )
             : state.status
     }
 }
