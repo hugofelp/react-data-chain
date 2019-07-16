@@ -184,15 +184,15 @@ This package provides:
 import { DataManager, withData, defineDataHandler, status } from 'react-data-chain'
 ```
 
-##### DataManager
+### DataManager
 `<DataManager />` - React component that takes no parameters. It holds all fecthed data and fetcher status in its state. It ensures the requested fetchers are unique, and shares access to its contents through `withData`, making use of React Context api.
 
-##### withData
+### withData
 `withData( dataMap, writersMap? ):HOC` - function that returns a Higher Order Component. Responsible for injecting fetchers data and write access into a component.
 - `dataMap` - Required. Expects an object defining the properties that will be populated with fetcher data in the resulting component. Each object key may be a string, using dots for deep assignment. For example `{ 'deeply.assigned.key': definition }` will result in `props.deeply.assigned.key` being immediatelly available to the resulting component, with an object shaped as `{ value, status }`. Each key should point to a data handler definition instance (created with `defineDataHandler`). 
 - `writersMap` - Optional. Expects an object defining the properties that will be populated with writer functions in the resulting component. Each key should point to a definition instance. The resulting component will receive a function for each of the assigned keys, with writing access to the corresponding definition's store.
 
-##### defineDataHandler
+### defineDataHandler
 `defineDataHandler( baseDefinition?, definitionsOverrides? ):Definition` - function that takes optional fetcher descriptions and returns a data handler definition instance, or instances. From this example:
 ```
 const myDefinition = defineDataHandler( {...}, { subdefinitionA: {...}, subdefinitionB: {...} } )
@@ -219,7 +219,8 @@ For all the functions above, where `mappedParameters` is provided, it means the 
     dependencies // a set of { value, status } of all required dependencies
 }
 ```
-##### status
+
+### status
 A string enum with the following properties:
 ```
 {
