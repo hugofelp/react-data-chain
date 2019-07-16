@@ -87,7 +87,7 @@ const TodosWithData = withData( {
 
 ### Creating definitions
 At its simplest form, a definition can be created without any arguments: `const emptyStore = defineDataHandler()`. This will provide an empty data store, and a writer function with access to it. If a fetcher is provided, the definition will then attempt to feed the store with the results of the fetcher. There are several rules you can describe as to when and how a fetcher should be triggered, and also how the resulting data will be reconciled with existing data in store.
-##### Reusing fetched data
+#### Reusing fetched data
 The conditions to fetch data may change over time, but the result may remain the same. For this example we will fetch a list of teams that a user is part of. When the selected user changes, we need to fetch the teams for the new user, but only teams that are not already available from previous fetch operations:
 ```
 const teamsDefinition = defineDataHandler( {
@@ -110,7 +110,7 @@ const teamsDefinition = defineDataHandler( {
 } )
 ```
 
-##### Multiple ways of fetching the same type of data
+#### Multiple ways of fetching the same type of data
 `defineDataHandler` may take a second parameter. As the first parameter describes the main definition, the second can create alternative definitions for reading and writing data to the same store by overriding the main definition's parameters. Say you define a fetcher to get a list of teams. Now, you may need to request a list of teams that a user is part of, or you may get a list of related teams. In both cases, you will want to fetch a list of teams, but based on different parameters. The advantage of creating variations of a definition is that you can share data between them , and in this case, only fetch teams that are not yet available locally:
 ```
 const teamsDefinition = defineDataHandler( {
@@ -147,7 +147,7 @@ withData( {
 } ) ( Component )
 ```
 
-##### Refreshing data
+#### Refreshing data
 By default, no data will be fetched if `isDataAvailable` returns true. You can use `fetcherKey` to force the fetcher to be executed, even if that data is already available. Similar to the key parameter of React components, the fetcherKey will be compared to the previous value, and execute the fetcher everytime a new key is assigned, regardless of previous conditions. In this example, we have a component requesting fresh data after every time it is mounted:
 ```
 const definitions = {
