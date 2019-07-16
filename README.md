@@ -227,7 +227,7 @@ A string enum with the following properties:
     WAITING,        // One ore more dependencies are pending
     WAITING_INPUT,  // Dependencies are resolved and data is not available, but no fetcher has been provided
     FETCHING,       // Dependencies are resolved, data is not available, fetch in progress
-    IDLE,           // Dependencies are resolved anf data is available
+    IDLE,           // Dependencies are resolved and data is available
     ERROR           // Fetcher promise was rejected
 }
 ```

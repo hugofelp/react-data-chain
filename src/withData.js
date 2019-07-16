@@ -8,7 +8,7 @@ export default function withData( dependenciesObject, settersObject ) {
             constructor( props, context ) {
                 super( props, context )
                 this._id = `component_${Date.now()}__${Math.random()}`
-                this._dependenciesKeys = Object.keys( dependenciesObject )
+                this._dependenciesKeys = !dependenciesObject ? [] : Object.keys( dependenciesObject )
                 this._setters = _formatSetters( settersObject, this.context.setStore )
             }
             componentWillMount() {
