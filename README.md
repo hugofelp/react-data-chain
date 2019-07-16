@@ -198,16 +198,17 @@ import { DataManager, withData, defineDataHandler, status } from 'react-data-cha
 const myDefinition = defineDataHandler( {...}, { subdefinitionA: {...}, subdefinitionB: {...} } )
 ```
 Not only `myDefinition` will be available for referencing from `withData`, but also `myDefinition.subdefinitionA` and `myDefinition.subdefinitionB`. All definition arguments are optional, and every key defined in `definitionOverrides`, will inherit all properties defined in the `baseDefinition`. These are the properties that can be described for each definition.
-| key | default value | format | desciption |
-| --- | --- | --- | --- |
-| mapData  | `store => store` | Function( store, dependencies ):Any | Transforms the data that will be available to requesting parties, including when there is no data in the store. This function is called on every update, and does not wait for dependencies, so you should always check before accessing dependencies' values.
-| dependencies | `undefined` | Object OR Function():Object | Just like the first argument of `withData`, this mapping will provide data from other Definitions. It also provides the relationship between definitions, so the execution of fetchers can be done in the correct order, or even revalidated once a dependency is updated.
-| mapParameters | `parameters => parameters` | Function( rawParameters ):Any \\ * `rawParameters ` as defined bellow | Called after dependencies are available, and before any other function that takes `mappedParameters`.
-| isDataAvailable | `( _, { store } ) => store !== undefined` | Function( mappedParameters, rawParameters ):Boolean | Called on every update after dependencies become available. If false, the definition will be flagged as pending, and the fetching process will be triggered. |
-| fetcher | `undefined` | Function( mappedParameters, rawParameters ):Promise | This function will be called whenever `isDataAvailable` returns false, or a new `fetcherKey` is assigned. The corresponding definition will then receive a status of `FETCHING` until the promise is either resolved or rejected. In case it is resolved, the promise results are then piped into `mapFetcherResponse`. Otherwise an `ERROR` status is assigned, and can only be recovered by assigning a new key. |
-| mapFetcherResponse | `response => response` | Function( fetcherResponse, mappedParameters, rawParameters ):Any | By default, the fetcher response replaces the value of the store. This function provides a way to merge incoming data with the current store. The returned value will replace the value of the corresponding store. | 
 
-*For all the functions above, where `mappedParameters` is provided, it means the result of `mapParameters`, and `rawParameters` consists of the following object:
+key | default value | format | desciption
+------- | ------- | ------- | -------
+mapData  | `store => store` | Function( store, dependencies ):Any | Transforms the data that will be available to requesting parties, including when there is no data in the store. This function is called on every update, and does not wait for dependencies, so you should always check before accessing dependencies' values.
+| dependencies | `undefined` | Object OR Function():Object | Just like the first argument of `withData`, this mapping will provide data from other Definitions. It also provides the relationship between definitions, so the execution of fetchers can be done in the correct order, or even revalidated once a dependency is updated.
+| mapParameters | `parameters => parameters` | Function( rawParameters ):Any - `rawParameters ` as defined bellow | Called after dependencies are available, and before any other function that takes `mappedParameters`.
+| isDataAvailable | `( _, { store } ) => store !== undefined` | Function( mappedParameters, rawParameters ):Boolean | Called on every update after dependencies become available. If false, the definition will be flagged as pending, and the fetching process will be triggered.
+fetcher | `undefined` | Function( mappedParameters, rawParameters ):Promise | This function will be called whenever `isDataAvailable` returns false, or a new `fetcherKey` is assigned. The corresponding definition will then receive a status of `FETCHING` until the promise is either resolved or rejected. In case it is resolved, the promise results are then piped into `mapFetcherResponse`. Otherwise an `ERROR` status is assigned, and can only be recovered by assigning a new key.
+mapFetcherResponse | `response => response` | Function( fetcherResponse, mappedParameters, rawParameters ):Any | By default, the fetcher response replaces the value of the store. This function provides a way to merge incoming data with the current store. The returned value will replace the value of the corresponding store.
+
+For all the functions above, where `mappedParameters` is provided, it means the result of `mapParameters`, and `rawParameters` consists of the following object:
 ```
 {
     data: {
