@@ -40,7 +40,7 @@ const AvatarWithData = withData( {
     'userData.image': definitions.userImage
 } )( AvatarComponent )
 ```
-### Instalation
+### Installation
 Assuming you are using npm as your package manager:
 ```
 npm install react-data-chain
